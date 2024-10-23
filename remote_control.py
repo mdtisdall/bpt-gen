@@ -3,7 +3,7 @@
 from xmlrpc.client import ServerProxy
 import time
 xmlrpc_control_client = ServerProxy('http://'+'localhost'+':8000')
-freq_steps = [0, 100, -100, 200, -200]
+freq_steps = [0, 50000000, -50000000, 100000000, -100000000]
 while True:
     for freq in freq_steps:
         print("retuning to: ",freq," Hz")

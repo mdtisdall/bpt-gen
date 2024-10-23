@@ -65,7 +65,7 @@ class ShiftedFreq(gr.top_block, Qt.QWidget):
         ##################################################
         # Variables
         ##################################################
-        self.samp_rate = samp_rate = 1024000
+        self.samp_rate = samp_rate = 1000000
         self.rmt_delta_freq = rmt_delta_freq = 0
 
         ##################################################
@@ -86,10 +86,10 @@ class ShiftedFreq(gr.top_block, Qt.QWidget):
             ),
             "",
         )
-        self.uhd_usrp_sink_0_0.set_samp_rate(1000000)
+        self.uhd_usrp_sink_0_0.set_samp_rate(samp_rate)
         # No synchronization enforced.
 
-        self.uhd_usrp_sink_0_0.set_center_freq(2523200000, 0)
+        self.uhd_usrp_sink_0_0.set_center_freq(2500000000 + rmt_delta_freq, 0)
         self.uhd_usrp_sink_0_0.set_antenna("TX/RX", 0)
         self.uhd_usrp_sink_0_0.set_gain(80, 0)
         self.uhd_usrp_sink_0 = uhd.usrp_sink(
@@ -101,31 +101,31 @@ class ShiftedFreq(gr.top_block, Qt.QWidget):
             ),
             "",
         )
-        self.uhd_usrp_sink_0.set_samp_rate(1000000)
+        self.uhd_usrp_sink_0.set_samp_rate(samp_rate)
         self.uhd_usrp_sink_0.set_time_unknown_pps(uhd.time_spec(0))
 
-        self.uhd_usrp_sink_0.set_center_freq(2523200000, 0)
+        self.uhd_usrp_sink_0.set_center_freq(2400000000, 0)
         self.uhd_usrp_sink_0.set_antenna("TX/RX", 0)
         self.uhd_usrp_sink_0.set_gain(80, 0)
-        self.qtgui_time_sink_x_0 = qtgui.time_sink_c(
+        self.qtgui_time_sink_x_1 = qtgui.time_sink_c(
             1024, #size
             samp_rate, #samp_rate
             "", #name
             1, #number of inputs
             None # parent
         )
-        self.qtgui_time_sink_x_0.set_update_time(0.10)
-        self.qtgui_time_sink_x_0.set_y_axis(-1, 1)
+        self.qtgui_time_sink_x_1.set_update_time(0.10)
+        self.qtgui_time_sink_x_1.set_y_axis(-1, 1)
 
-        self.qtgui_time_sink_x_0.set_y_label('Amplitude', "")
+        self.qtgui_time_sink_x_1.set_y_label('Amplitude', "")
 
-        self.qtgui_time_sink_x_0.enable_tags(True)
-        self.qtgui_time_sink_x_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, qtgui.TRIG_SLOPE_POS, 0.0, 0, 0, "")
-        self.qtgui_time_sink_x_0.enable_autoscale(False)
-        self.qtgui_time_sink_x_0.enable_grid(False)
-        self.qtgui_time_sink_x_0.enable_axis_labels(True)
-        self.qtgui_time_sink_x_0.enable_control_panel(False)
-        self.qtgui_time_sink_x_0.enable_stem_plot(False)
+        self.qtgui_time_sink_x_1.enable_tags(True)
+        self.qtgui_time_sink_x_1.set_trigger_mode(qtgui.TRIG_MODE_FREE, qtgui.TRIG_SLOPE_POS, 0.0, 0, 0, "")
+        self.qtgui_time_sink_x_1.enable_autoscale(False)
+        self.qtgui_time_sink_x_1.enable_grid(False)
+        self.qtgui_time_sink_x_1.enable_axis_labels(True)
+        self.qtgui_time_sink_x_1.enable_control_panel(False)
+        self.qtgui_time_sink_x_1.enable_stem_plot(False)
 
 
         labels = ['Signal 1', 'Signal 2', 'Signal 3', 'Signal 4', 'Signal 5',
@@ -145,38 +145,38 @@ class ShiftedFreq(gr.top_block, Qt.QWidget):
         for i in range(2):
             if len(labels[i]) == 0:
                 if (i % 2 == 0):
-                    self.qtgui_time_sink_x_0.set_line_label(i, "Re{{Data {0}}}".format(i/2))
+                    self.qtgui_time_sink_x_1.set_line_label(i, "Re{{Data {0}}}".format(i/2))
                 else:
-                    self.qtgui_time_sink_x_0.set_line_label(i, "Im{{Data {0}}}".format(i/2))
+                    self.qtgui_time_sink_x_1.set_line_label(i, "Im{{Data {0}}}".format(i/2))
             else:
-                self.qtgui_time_sink_x_0.set_line_label(i, labels[i])
-            self.qtgui_time_sink_x_0.set_line_width(i, widths[i])
-            self.qtgui_time_sink_x_0.set_line_color(i, colors[i])
-            self.qtgui_time_sink_x_0.set_line_style(i, styles[i])
-            self.qtgui_time_sink_x_0.set_line_marker(i, markers[i])
-            self.qtgui_time_sink_x_0.set_line_alpha(i, alphas[i])
+                self.qtgui_time_sink_x_1.set_line_label(i, labels[i])
+            self.qtgui_time_sink_x_1.set_line_width(i, widths[i])
+            self.qtgui_time_sink_x_1.set_line_color(i, colors[i])
+            self.qtgui_time_sink_x_1.set_line_style(i, styles[i])
+            self.qtgui_time_sink_x_1.set_line_marker(i, markers[i])
+            self.qtgui_time_sink_x_1.set_line_alpha(i, alphas[i])
 
-        self._qtgui_time_sink_x_0_win = sip.wrapinstance(self.qtgui_time_sink_x_0.qwidget(), Qt.QWidget)
-        self.top_layout.addWidget(self._qtgui_time_sink_x_0_win)
-        self.qtgui_freq_sink_x_0 = qtgui.freq_sink_c(
+        self._qtgui_time_sink_x_1_win = sip.wrapinstance(self.qtgui_time_sink_x_1.qwidget(), Qt.QWidget)
+        self.top_layout.addWidget(self._qtgui_time_sink_x_1_win)
+        self.qtgui_freq_sink_x_1 = qtgui.freq_sink_c(
             1024, #size
             window.WIN_BLACKMAN_hARRIS, #wintype
-            1000, #fc
+            0, #fc
             samp_rate, #bw
             "", #name
             1,
             None # parent
         )
-        self.qtgui_freq_sink_x_0.set_update_time(0.10)
-        self.qtgui_freq_sink_x_0.set_y_axis((-140), 10)
-        self.qtgui_freq_sink_x_0.set_y_label('Relative Gain', 'dB')
-        self.qtgui_freq_sink_x_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, 0.0, 0, "")
-        self.qtgui_freq_sink_x_0.enable_autoscale(False)
-        self.qtgui_freq_sink_x_0.enable_grid(False)
-        self.qtgui_freq_sink_x_0.set_fft_average(1.0)
-        self.qtgui_freq_sink_x_0.enable_axis_labels(True)
-        self.qtgui_freq_sink_x_0.enable_control_panel(False)
-        self.qtgui_freq_sink_x_0.set_fft_window_normalized(False)
+        self.qtgui_freq_sink_x_1.set_update_time(0.10)
+        self.qtgui_freq_sink_x_1.set_y_axis((-140), 10)
+        self.qtgui_freq_sink_x_1.set_y_label('Relative Gain', 'dB')
+        self.qtgui_freq_sink_x_1.set_trigger_mode(qtgui.TRIG_MODE_FREE, 0.0, 0, "")
+        self.qtgui_freq_sink_x_1.enable_autoscale(False)
+        self.qtgui_freq_sink_x_1.enable_grid(False)
+        self.qtgui_freq_sink_x_1.set_fft_average(1.0)
+        self.qtgui_freq_sink_x_1.enable_axis_labels(True)
+        self.qtgui_freq_sink_x_1.enable_control_panel(False)
+        self.qtgui_freq_sink_x_1.set_fft_window_normalized(False)
 
 
 
@@ -191,23 +191,23 @@ class ShiftedFreq(gr.top_block, Qt.QWidget):
 
         for i in range(1):
             if len(labels[i]) == 0:
-                self.qtgui_freq_sink_x_0.set_line_label(i, "Data {0}".format(i))
+                self.qtgui_freq_sink_x_1.set_line_label(i, "Data {0}".format(i))
             else:
-                self.qtgui_freq_sink_x_0.set_line_label(i, labels[i])
-            self.qtgui_freq_sink_x_0.set_line_width(i, widths[i])
-            self.qtgui_freq_sink_x_0.set_line_color(i, colors[i])
-            self.qtgui_freq_sink_x_0.set_line_alpha(i, alphas[i])
+                self.qtgui_freq_sink_x_1.set_line_label(i, labels[i])
+            self.qtgui_freq_sink_x_1.set_line_width(i, widths[i])
+            self.qtgui_freq_sink_x_1.set_line_color(i, colors[i])
+            self.qtgui_freq_sink_x_1.set_line_alpha(i, alphas[i])
 
-        self._qtgui_freq_sink_x_0_win = sip.wrapinstance(self.qtgui_freq_sink_x_0.qwidget(), Qt.QWidget)
-        self.top_layout.addWidget(self._qtgui_freq_sink_x_0_win)
+        self._qtgui_freq_sink_x_1_win = sip.wrapinstance(self.qtgui_freq_sink_x_1.qwidget(), Qt.QWidget)
+        self.top_layout.addWidget(self._qtgui_freq_sink_x_1_win)
         self.analog_const_source_x_0 = analog.sig_source_c(0, analog.GR_CONST_WAVE, 0, 0, 1)
 
 
         ##################################################
         # Connections
         ##################################################
-        self.connect((self.analog_const_source_x_0, 0), (self.qtgui_freq_sink_x_0, 0))
-        self.connect((self.analog_const_source_x_0, 0), (self.qtgui_time_sink_x_0, 0))
+        self.connect((self.analog_const_source_x_0, 0), (self.qtgui_freq_sink_x_1, 0))
+        self.connect((self.analog_const_source_x_0, 0), (self.qtgui_time_sink_x_1, 0))
         self.connect((self.analog_const_source_x_0, 0), (self.uhd_usrp_sink_0, 0))
         self.connect((self.analog_const_source_x_0, 0), (self.uhd_usrp_sink_0_0, 0))
 
@@ -225,14 +225,17 @@ class ShiftedFreq(gr.top_block, Qt.QWidget):
 
     def set_samp_rate(self, samp_rate):
         self.samp_rate = samp_rate
-        self.qtgui_freq_sink_x_0.set_frequency_range(1000, self.samp_rate)
-        self.qtgui_time_sink_x_0.set_samp_rate(self.samp_rate)
+        self.qtgui_freq_sink_x_1.set_frequency_range(0, self.samp_rate)
+        self.qtgui_time_sink_x_1.set_samp_rate(self.samp_rate)
+        self.uhd_usrp_sink_0.set_samp_rate(self.samp_rate)
+        self.uhd_usrp_sink_0_0.set_samp_rate(self.samp_rate)
 
     def get_rmt_delta_freq(self):
         return self.rmt_delta_freq
 
     def set_rmt_delta_freq(self, rmt_delta_freq):
         self.rmt_delta_freq = rmt_delta_freq
+        self.uhd_usrp_sink_0_0.set_center_freq(2500000000 + self.rmt_delta_freq, 0)
 
 
 
